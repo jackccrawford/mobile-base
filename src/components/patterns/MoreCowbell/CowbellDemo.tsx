@@ -15,7 +15,6 @@ import Animated, {
   interpolate,
 } from 'react-native-reanimated';
 import { Bell, Pause, Play } from 'lucide-react-native';
-import { PatternContainer } from '../../PatternContainer';
 
 // [AI-FREEZE] Core audio configuration
 const COWBELL_SOUND = require('./assets/cowbell.mp3');
@@ -158,58 +157,56 @@ export const CowbellDemo = () => {
   }));
 
   return (
-    <PatternContainer>
-      <View style={styles.container}>
-        <Animated.View style={[styles.feverContainer, feverStyle]}>
-          <Text style={[styles.feverText, { color: theme.colors.primary }]}>
-            {isPlaying ? '🎸 Rock on! 🎸' : '🔔 Ring that bell! 🔔'}
-          </Text>
-        </Animated.View>
-        
-        <Pressable 
-          onPress={toggleSound}
-          disabled={isLoading}
-          style={({ pressed }) => [
-            styles.button,
-            pressed && { opacity: 0.7 },
-            { 
-              backgroundColor: isPlaying 
-                ? theme.colors.primary + '30'
-                : theme.colors.secondary + '20'
-            }
-          ]}
-        >
-          <Animated.View style={[styles.bellContainer, bellStyle]}>
-            {isLoading ? (
-              <ActivityIndicator color={theme.colors.primary} />
-            ) : (
-              <>
-                <Bell 
-                  size={32} 
-                  color={isPlaying ? theme.colors.primary : theme.colors.secondary}
-                  strokeWidth={2.5}
-                />
-                {isPlaying ? (
-                  <View style={[styles.iconBackground, { backgroundColor: theme.colors.primary }]}>
-                    <Pause size={16} color="white" style={styles.playIcon} />
-                  </View>
-                ) : (
-                  <View style={[styles.iconBackground, { backgroundColor: theme.colors.secondary }]}>
-                    <Play size={16} color="white" style={styles.playIcon} />
-                  </View>
-                )}
-              </>
-            )}
-          </Animated.View>
-        </Pressable>
-
-        {error && (
-          <Text style={[styles.errorText, { color: theme.colors.error }]}>
-            {error}
-          </Text>
-        )}
+    <View style={styles.container}>
+      <View style={styles.feverContainer}>
+        <Text style={[styles.feverText, { color: theme.colors.primary }]}>
+          {isPlaying ? '🎸 Rock on! 🎸' : '🔔 Ring that bell! 🔔'}
+        </Text>
       </View>
-    </PatternContainer>
+      
+      <Pressable 
+        onPress={toggleSound}
+        disabled={isLoading}
+        style={({ pressed }) => [
+          styles.button,
+          pressed && { opacity: 0.7 },
+          { 
+            backgroundColor: isPlaying 
+              ? theme.colors.primary + '30'
+              : theme.colors.secondary + '20'
+          }
+        ]}
+      >
+        <Animated.View style={[styles.bellContainer, bellStyle]}>
+          {isLoading ? (
+            <ActivityIndicator color={theme.colors.primary} />
+          ) : (
+            <>
+              <Bell 
+                size={32} 
+                color={isPlaying ? theme.colors.primary : theme.colors.secondary}
+                strokeWidth={2.5}
+              />
+              {isPlaying ? (
+                <View style={[styles.iconBackground, { backgroundColor: theme.colors.primary }]}>
+                  <Pause size={16} color="white" style={styles.playIcon} />
+                </View>
+              ) : (
+                <View style={[styles.iconBackground, { backgroundColor: theme.colors.secondary }]}>
+                  <Play size={16} color="white" style={styles.playIcon} />
+                </View>
+              )}
+            </>
+          )}
+        </Animated.View>
+      </Pressable>
+
+      {error && (
+        <Text style={[styles.errorText, { color: theme.colors.error }]}>
+          {error}
+        </Text>
+      )}
+    </View>
   );
 };
 

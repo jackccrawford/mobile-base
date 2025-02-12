@@ -3,7 +3,6 @@ import { View, StyleSheet, ScrollView, RefreshControl, ActivityIndicator, Image 
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { Text } from '../../../components/Text';
 import { useTheme } from '../../../contexts/ThemeContext';
-import { PatternContainer } from '../../PatternContainer';
 
 // [AI-FREEZE] Grid configuration and core types
 const COLUMN_COUNT = 2;
@@ -167,7 +166,7 @@ export const MasonryGridDemo = () => {
   );
 
   return (
-    <PatternContainer>
+    <View style={styles.container}>
       <ScrollView
         style={styles.container}
         onScroll={handleScroll}
@@ -203,7 +202,7 @@ export const MasonryGridDemo = () => {
           <ActivityIndicator style={styles.loader} size="large" />
         )}
       </ScrollView>
-    </PatternContainer>
+    </View>
   );
 };
 

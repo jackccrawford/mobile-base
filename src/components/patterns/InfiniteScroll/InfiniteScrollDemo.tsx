@@ -1,7 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { View, Text, ScrollView, RefreshControl, ActivityIndicator, Image, StyleSheet } from 'react-native';
 import { useTheme } from '../../../contexts/ThemeContext';
-import { PatternContainer } from '../../PatternContainer';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
 interface ScrollItem {
@@ -141,7 +140,7 @@ export const InfiniteScrollDemo = () => {
   }, [onEndReached]);
 
   return (
-    <PatternContainer>
+    <View style={styles.container}>
       <ScrollView
         style={styles.container}
         onScroll={handleScroll}
@@ -162,7 +161,7 @@ export const InfiniteScrollDemo = () => {
           <ActivityIndicator style={styles.loader} size="large" />
         )}
       </ScrollView>
-    </PatternContainer>
+    </View>
   );
 };
 

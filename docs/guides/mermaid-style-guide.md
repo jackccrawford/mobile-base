@@ -1,8 +1,11 @@
 # Mermaid Style Guide
 
-## Configuration
+## Themes
 
-All diagrams MUST use this exact configuration:
+We support two official themes:
+
+### 1. Dark Theme (Technical Diagrams)
+Use for technical flow diagrams, sequence diagrams, and architecture diagrams.
 
 ```css
 %%{init: {
@@ -17,106 +20,142 @@ All diagrams MUST use this exact configuration:
 }}%%
 ```
 
-## Node Styles
+### 2. Pastel Theme (Conceptual Diagrams)
+Use for mindmaps, concept maps, and organizational diagrams.
 
-- **Action Nodes**: Use `([Text])` syntax
-  ```mermaid
-  %%{init: {'theme': 'dark'}}%%
-  graph TD
-    A([Action Node])
-  ```
+```css
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#E8D5C4',
+    'primaryTextColor': '#3A3845',
+    'primaryBorderColor': '#7D6E83',
+    'lineColor': '#7D6E83',
+    'secondaryColor': '#DED0B6',
+    'tertiaryColor': '#B7C4CF',
+    'mainBkg': '#FFFFFF',
+    'nodeBorder': '#7D6E83'
+  }
+}}%%
+```
 
-- **Decision Nodes**: Use `{Text}` syntax
-  ```mermaid
-  %%{init: {'theme': 'dark'}}%%
-  graph TD
-    A{Decision Node}
-  ```
+## Diagram Types
 
-## Edge Labels
+### 1. Flow Diagrams (Dark Theme)
+Use for technical flows, processes, and architecture.
 
-- Use `|Text|` syntax for edge labels
-  ```mermaid
-  %%{init: {'theme': 'dark'}}%%
-  graph TD
-    A([Start]) -->|Condition| B([End])
-  ```
+```mermaid
+%%{init: {'theme': 'dark'}}%%
+graph TD
+    A([Start]) -->|Condition| B{Decision}
+    B -->|Yes| C([Action])
+    B -->|No| D([Alternative])
+```
 
-## Subgraphs
-
-- Use simple text labels without quotes
-  ```mermaid
-  %%{init: {'theme': 'dark'}}%%
-  graph TD
-    subgraph Group Name
-        A([Node One])
-        B([Node Two])
-    end
-  ```
-
-## Essential Rules
-
-1. **NO custom styling blocks**: Never use `style` statements - rely on theme
-2. **NO quoted node text**: Use `([Text])` not `(["Text"])`
-3. **NO custom colors**: Use theme defaults only
-4. **NO background fills** in subgraphs
-5. **NO emojis or icons**: Keep it clean and professional
-
-## Example: Complete Diagram
+### 2. Mindmaps (Pastel Theme)
+Use for concept exploration and hierarchical relationships.
 
 ```mermaid
 %%{init: {
-  'theme': 'dark',
+  'theme': 'base',
   'themeVariables': {
-    'darkMode': true,
-    'background': '#252b32',
-    'mainBkg': '#252b32',
-    'textColor': '#c9d1d9',
-    'lineColor': '#c9d1d9'
+    'primaryColor': '#E8D5C4',
+    'primaryTextColor': '#3A3845'
+  }
+}}%%
+mindmap
+  root((Central<br>Concept))
+    Branch 1
+      Sub-topic
+    Branch 2
+      Sub-topic
+```
+
+### 3. Hub-Spoke Diagrams (Pastel Theme)
+Use for distributed systems and organizational structures.
+
+```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#E8D5C4',
+    'primaryTextColor': '#3A3845'
   }
 }}%%
 graph TD
-    A([Start]) --> B{Decision?}
-    B -->|Yes| C([Action One])
-    B -->|No| D([Action Two])
-    C --> E([End])
-    D --> E
-    subgraph Process
-        C
-        D
+    subgraph Hub[Central Hub]
+        H((Hub))
     end
+    subgraph Spoke1[Spoke 1]
+        S1((Node 1))
+    end
+    subgraph Spoke2[Spoke 2]
+        S2((Node 2))
+    end
+    H --- S1
+    H --- S2
+    
+    classDef hub fill:#E8D5C4,stroke:#7D6E83
+    classDef spoke fill:#DED0B6,stroke:#7D6E83
+    class H hub
+    class S1,S2 spoke
 ```
 
-## Why This Matters
+## Node Styles
 
-- **Quality Reflection**
-    - **Professional**: Shows attention to detail
-    - **Trustworthy**: Suggests reliability in our patterns
-    - **Cohesive**: Demonstrates unified vision
-    - **Clear**: Enhances readability and understanding
+- **Action Nodes**: Use `([Text])` syntax for dark theme
+- **Decision Nodes**: Use `{Text}` syntax for dark theme
+- **Mindmap Nodes**: Use `((Text))` syntax for root, plain text for branches
+- **Hub-Spoke Nodes**: Use `((Text))` syntax with custom classes
+
+## Essential Rules
+
+1. **Theme Consistency**: 
+   - Use dark theme for technical diagrams
+   - Use pastel theme for conceptual diagrams
+   - Never mix themes in the same diagram
+
+2. **Node Styling**:
+   - Follow node syntax conventions for each diagram type
+   - Use custom classes only for hub-spoke diagrams
+   - Keep text concise and readable
+
+3. **Colors**:
+   - Dark theme: Use theme defaults
+   - Pastel theme: Use provided color palette
+   - Ensure WCAG compliance for text contrast
+
+4. **Layout**:
+   - Keep diagrams clean and focused
+   - Use appropriate spacing
+   - Limit number of nodes for clarity
 
 ## Validation Checklist
 
-- **Theme Configuration**
-    - **Dark Mode**: Uses exact theme configuration
-    - **Color Variables**: Includes all required variables
-    - **Background Color**: Set to #252b32
-    - **Text Color**: Set to #c9d1d9
+### Dark Theme Technical Diagrams
+- Uses correct theme configuration
+- Proper node syntax
+- No custom styling
+- Clear flow direction
 
-- **Node Syntax**
-    - **Square Brackets**: Uses ([Text]) for nodes
-    - **No Quotes**: Avoids quoted text in nodes
-    - **Consistent Shape**: Uses same node style
-    - **Clean Labels**: Simple, descriptive text
+### Pastel Theme Conceptual Diagrams
+- Uses pastel color palette
+- WCAG compliant text contrast
+- Appropriate diagram type selection
+- Clean, hierarchical structure
 
-- **Edge Labels**
-    - **Pipe Syntax**: Uses |Text| for edge labels
-    - **Brief Text**: Keeps labels concise
-    - **No Styling**: No custom edge colors
-    - **Clear Flow**: Logical direction indicators
+### General Guidelines
+- No emojis or icons
+- Concise, descriptive text
+- Logical flow and organization
+- Professional appearance
 
-- **Overall Style**
-    - **No Custom Styling**: Avoids style blocks
-    - **No Background Fills**: Clean subgraph style
-    - **No Emojis**: Professional appearance
-    - **Minimal Design**: Clean and focused layout
+## Why These Standards Matter
+
+- **Consistency**: Unified visual language across documentation
+- **Accessibility**: WCAG-compliant color contrasts
+- **Clarity**: Different styles for different purposes
+- **Professionalism**: Clean, focused diagrams
+
+---
+*Note: Always test diagrams for readability and WCAG compliance before committing.*

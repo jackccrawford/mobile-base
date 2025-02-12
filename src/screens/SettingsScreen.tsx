@@ -1,13 +1,12 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 
 export const SettingsScreen = () => {
-  const { theme } = useTheme();
+  const { theme, toggleHeader } = useTheme();
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.content}>
         <Text style={[styles.title, { color: theme.colors.text }]}>Profile</Text>
         <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
@@ -17,11 +16,21 @@ export const SettingsScreen = () => {
           <Text style={[styles.label, { color: theme.colors.text, marginTop: 16 }]}>Theme</Text>
           <Text style={[styles.value, { color: theme.colors.text }]}>{theme.dark ? 'Dark' : 'Light'}</Text>
           
+          <Text style={[styles.label, { color: theme.colors.text, marginTop: 16 }]}>Header Style</Text>
+          <TouchableOpacity 
+            onPress={toggleHeader}
+            style={[styles.button, { backgroundColor: theme.colors.primary }]}
+          >
+            <Text style={[styles.buttonText, { color: '#fff' }]}>
+              {theme.useBuiltInHeader ? 'Using Built-in Header' : 'Using Custom Header'}
+            </Text>
+          </TouchableOpacity>
+
           <Text style={[styles.label, { color: theme.colors.text, marginTop: 16 }]}>Version</Text>
           <Text style={[styles.value, { color: theme.colors.text }]}>1.0.0</Text>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -58,5 +67,15 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 16,
+  },
+  button: {
+    padding: 12,
+    borderRadius: 6,
+    marginTop: 8,
+  },
+  buttonText: {
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
   },
 });
