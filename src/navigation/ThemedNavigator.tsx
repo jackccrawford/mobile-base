@@ -83,7 +83,7 @@ const TabNavigator = () => {
         fontSize: 18,
         fontWeight: '500'
       }}>
-        Mobile Base
+        {theme.headerTitle}
       </Text>
     </View>
   );
@@ -92,7 +92,7 @@ const TabNavigator = () => {
     <Tab.Navigator
       screenOptions={{
         tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.text,
+        tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
         headerShown: true,
         headerStyle: {
           backgroundColor: theme.colors.surface,
@@ -103,8 +103,8 @@ const TabNavigator = () => {
         },
         tabBarStyle: {
           borderTopWidth: 1,
-          borderTopColor: 'rgba(0,0,0,0.1)',
-          backgroundColor: '#fff',
+          borderTopColor: theme.colors.outline + '20',
+          backgroundColor: theme.colors.surface,
           paddingTop: 8,
           height: Platform.select({
             ios: 60 + insets.bottom,
@@ -163,6 +163,7 @@ const TabNavigator = () => {
           tabBarIcon: ({ color, size }) => (
             <Settings size={size} color={color} />
           ),
+          tabBarLabel: 'Settings',
         }}
       />
     </Tab.Navigator>

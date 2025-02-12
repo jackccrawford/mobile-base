@@ -1,36 +1,160 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text as RNText, TouchableOpacity, ScrollView, Linking, Platform, TextInput } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
+import { Moon, Sun, Layout, ChevronRight, Info, Github, ExternalLink, Smartphone, Text as TextIcon } from 'lucide-react-native';
+import type { ThemeMode } from '../contexts/ThemeContext';
 
 export const SettingsScreen = () => {
-  const { theme, toggleHeader } = useTheme();
+  const { theme, setHeaderTitle, setThemeMode } = useTheme();
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [tempTitle, setTempTitle] = useState(theme.headerTitle);
+
+  const openGitHub = async () => {
+    const url = 'https://github.com/jackccrawford/mobile-base';
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      await Linking.openURL(url);
+    }
+  };
+
+  const handleTitlePress = () => {
+    setTempTitle(theme.headerTitle);
+    setIsEditingTitle(true);
+  };
+
+  const handleTitleSubmit = () => {
+    setHeaderTitle(tempTitle);
+    setIsEditingTitle(false);
+  };
+
+  const handleThemeChange = (mode: ThemeMode) => {
+    setThemeMode(mode);
+  };
+
+  const getThemeIcon = () => {
+    if (theme.themeMode === 'system') return <Smartphone size={24} color={theme.colors.onSurface} />;
+    return theme.dark ? 
+      <Moon size={24} color={theme.colors.onSurface} /> : 
+      <Sun size={24} color={theme.colors.onSurface} />;
+  };
+
+  const getThemeText = () => {
+    switch (theme.themeMode) {
+      case 'light': return 'Light';
+      case 'dark': return 'Dark';
+      default: return 'System';
+    }
+  };
+
+  const remainingChars = 20 - (tempTitle?.length || 0);
+  const charsColor = remainingChars <= 3 ? theme.colors.error : 
+                    remainingChars <= 5 ? theme.colors.info : 
+                    theme.colors.onSurfaceVariant;
+
+  const renderSettingsItem = (
+    icon: React.ReactNode, 
+    title: string, 
+    value: string, 
+    onPress?: () => void, 
+    showChevron: boolean = true,
+    rightIcon?: React.ReactNode,
+    customContent?: React.ReactNode
+  ) => (
+    <TouchableOpacity 
+      style={[styles.settingsItem, { borderBottomColor: theme.colors.outline + '20' }]}
+      onPress={onPress}
+      disabled={!onPress && !customContent}
+    >
+      <View style={styles.settingsItemLeft}>
+        {icon}
+        <RNText style={[styles.settingsItemTitle, { color: theme.colors.onSurface }]}>{title}</RNText>
+      </View>
+      <View style={styles.settingsItemRight}>
+        {customContent || (
+          <>
+            <RNText style={[styles.settingsItemValue, { color: theme.colors.onSurfaceVariant }]}>{value}</RNText>
+            {rightIcon || (showChevron && <ChevronRight size={20} color={theme.colors.onSurfaceVariant} />)}
+          </>
+        )}
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={styles.content}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>Profile</Text>
-        <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
-          <Text style={[styles.label, { color: theme.colors.text }]}>Name</Text>
-          <Text style={[styles.value, { color: theme.colors.text }]}>Mobile Base User</Text>
-          
-          <Text style={[styles.label, { color: theme.colors.text, marginTop: 16 }]}>Theme</Text>
-          <Text style={[styles.value, { color: theme.colors.text }]}>{theme.dark ? 'Dark' : 'Light'}</Text>
-          
-          <Text style={[styles.label, { color: theme.colors.text, marginTop: 16 }]}>Header Style</Text>
-          <TouchableOpacity 
-            onPress={toggleHeader}
-            style={[styles.button, { backgroundColor: theme.colors.primary }]}
-          >
-            <Text style={[styles.buttonText, { color: '#fff' }]}>
-              {theme.useBuiltInHeader ? 'Using Built-in Header' : 'Using Custom Header'}
-            </Text>
-          </TouchableOpacity>
-
-          <Text style={[styles.label, { color: theme.colors.text, marginTop: 16 }]}>Version</Text>
-          <Text style={[styles.value, { color: theme.colors.text }]}>1.0.0</Text>
+    <ScrollView 
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      contentInsetAdjustmentBehavior="automatic"
+    >
+      <View style={styles.section}>
+        <RNText style={[styles.sectionTitle, { color: theme.colors.primary }]}>Appearance</RNText>
+        <View style={[styles.card, { backgroundColor: theme.colors.surface, elevation: 2 }]}>
+          {renderSettingsItem(
+            getThemeIcon(),
+            'Theme',
+            getThemeText(),
+            () => {
+              const modes: ThemeMode[] = ['system', 'light', 'dark'];
+              const currentIndex = modes.indexOf(theme.themeMode);
+              const nextMode = modes[(currentIndex + 1) % modes.length];
+              handleThemeChange(nextMode);
+            }
+          )}
+          {renderSettingsItem(
+            <TextIcon size={24} color={theme.colors.onSurface} />,
+            'Header Title',
+            theme.headerTitle,
+            handleTitlePress,
+            false,
+            undefined,
+            isEditingTitle && (
+              <View style={styles.titleEditContainer}>
+                <TextInput
+                  value={tempTitle}
+                  onChangeText={setTempTitle}
+                  style={[styles.titleInput, { 
+                    color: theme.colors.onSurface,
+                    borderColor: theme.colors.outline,
+                  }]}
+                  maxLength={20}
+                  autoFocus
+                  onBlur={handleTitleSubmit}
+                  onSubmitEditing={handleTitleSubmit}
+                />
+                <RNText style={[styles.charCount, { color: charsColor }]}>
+                  {remainingChars}
+                </RNText>
+              </View>
+            )
+          )}
         </View>
       </View>
-    </View>
+
+      <View style={styles.section}>
+        <RNText style={[styles.sectionTitle, { color: theme.colors.primary }]}>About</RNText>
+        <View style={[styles.card, { backgroundColor: theme.colors.surface, elevation: 2 }]}>
+          {renderSettingsItem(
+            <Info size={24} color={theme.colors.onSurface} />,
+            'Version',
+            '1.0.0',
+            undefined,
+            false
+          )}
+          {renderSettingsItem(
+            <Github size={24} color={theme.colors.onSurface} />,
+            'Source Code',
+            'View on GitHub',
+            openGitHub,
+            false,
+            <ExternalLink size={20} color={theme.colors.onSurfaceVariant} />
+          )}
+        </View>
+      </View>
+
+      <RNText style={[styles.footer, { color: theme.colors.onSurfaceVariant }]}>
+        Copyright 2025 Managed Ventures LLC{'\n'}
+        MIT License
+      </RNText>
+    </ScrollView>
   );
 };
 
@@ -38,44 +162,85 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  content: {
-    flex: 1,
+  section: {
     padding: 16,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 8,
+    marginLeft: 8,
+    letterSpacing: 0.1,
+    textTransform: 'uppercase',
   },
   card: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    ...Platform.select({
+      android: {
+        elevation: 2,
+      },
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 1,
+        },
+        shadowOpacity: 0.15,
+        shadowRadius: 3,
+      },
+    }),
+  },
+  settingsItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 16,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    borderBottomWidth: 1,
   },
-  label: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 4,
-    opacity: 0.7,
+  settingsItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
   },
-  value: {
+  settingsItemRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  settingsItemTitle: {
     fontSize: 16,
+    fontWeight: '400',
   },
-  button: {
-    padding: 12,
-    borderRadius: 6,
-    marginTop: 8,
-  },
-  buttonText: {
+  settingsItemValue: {
     fontSize: 14,
+    fontWeight: '400',
+  },
+  titleEditContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  titleInput: {
+    fontSize: 14,
+    fontWeight: '400',
+    padding: 4,
+    paddingHorizontal: 8,
+    borderWidth: 1,
+    borderRadius: 4,
+    width: 120,
+  },
+  charCount: {
+    fontSize: 12,
     fontWeight: '500',
+    width: 24,
+    textAlign: 'right',
+  },
+  footer: {
     textAlign: 'center',
+    padding: 16,
+    fontSize: 14,
+    opacity: 0.7,
+    lineHeight: 20,
   },
 });

@@ -1,4 +1,8 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useColorScheme } from 'react-native';
+
+export type ThemeMode = 'light' | 'dark' | 'system';
 
 export interface Theme {
   colors: {
@@ -15,6 +19,8 @@ export interface Theme {
     onSurface: string;
     primaryContainer: string;
     onPrimaryContainer: string;
+    outline: string;
+    onSurfaceVariant: string;
   };
   spacing: {
     xs: number;
@@ -24,6 +30,8 @@ export interface Theme {
     xl: number;
   };
   dark: boolean;
+  themeMode: ThemeMode;
+  headerTitle: string;
 }
 
 const defaultTheme: Theme = {
@@ -41,6 +49,8 @@ const defaultTheme: Theme = {
     onSurface: '#000000',
     primaryContainer: '#E3F2FD',
     onPrimaryContainer: '#000000',
+    outline: '#79747E',
+    onSurfaceVariant: '#49454F',
   },
   spacing: {
     xs: 4,
@@ -50,20 +60,92 @@ const defaultTheme: Theme = {
     xl: 32,
   },
   dark: false,
+  themeMode: 'system',
+  headerTitle: 'Mobile Base',
+};
+
+const darkThemeColors = {
+  ...defaultTheme.colors,
+  background: '#000000',
+  text: '#FFFFFF',
+  surface: '#121212',
+  onSurface: '#FFFFFF',
+  primaryContainer: '#1A237E',
+  onPrimaryContainer: '#FFFFFF',
+  outline: '#938F99',
+  onSurfaceVariant: '#CAC4D0',
 };
 
 export interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  setHeaderTitle: (title: string) => void;
+  setThemeMode: (mode: ThemeMode) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(defaultTheme);
+  const [theme, setThemeState] = useState<Theme>(defaultTheme);
+  const systemColorScheme = useColorScheme();
+
+  useEffect(() => {
+    // Load saved theme settings
+    const loadTheme = async () => {
+      try {
+        const savedTheme = await AsyncStorage.getItem('theme');
+        if (savedTheme) {
+          setThemeState(JSON.parse(savedTheme));
+        }
+      } catch (error) {
+        console.error('Error loading theme:', error);
+      }
+    };
+    loadTheme();
+  }, []);
+
+  useEffect(() => {
+    // Update dark mode based on theme mode and system preference
+    const isDark = theme.themeMode === 'system' 
+      ? systemColorScheme === 'dark'
+      : theme.themeMode === 'dark';
+
+    if (isDark !== theme.dark) {
+      setTheme({
+        ...theme,
+        dark: isDark,
+        colors: isDark ? darkThemeColors : defaultTheme.colors,
+      });
+    }
+  }, [systemColorScheme, theme.themeMode]);
+
+  const setTheme = async (newTheme: Theme) => {
+    try {
+      await AsyncStorage.setItem('theme', JSON.stringify(newTheme));
+      setThemeState(newTheme);
+    } catch (error) {
+      console.error('Error saving theme:', error);
+    }
+  };
+
+  const setHeaderTitle = (title: string) => {
+    if (title.length <= 20) {
+      setTheme({
+        ...theme,
+        headerTitle: title,
+      });
+    }
+  };
+
+  const setThemeMode = (mode: ThemeMode) => {
+    setTheme({
+      ...theme,
+      themeMode: mode,
+    });
+  };
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, setHeaderTitle, setThemeMode }}>
       {children}
     </ThemeContext.Provider>
   );
