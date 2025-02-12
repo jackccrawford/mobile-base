@@ -11,7 +11,7 @@ export const SettingsScreen = () => {
         <Text style={[styles.title, { color: theme.colors.text }]}>Profile</Text>
         <View style={[styles.card, { backgroundColor: theme.colors.surface }]}>
           <Text style={[styles.label, { color: theme.colors.text }]}>Name</Text>
-          <Text style={[styles.value, { color: theme.colors.text }]}>Pattern Bridge User</Text>
+          <Text style={[styles.value, { color: theme.colors.text }]}>Mobile Base User</Text>
           
           <Text style={[styles.label, { color: theme.colors.text, marginTop: 16 }]}>Theme</Text>
           <Text style={[styles.value, { color: theme.colors.text }]}>{theme.dark ? 'Dark' : 'Light'}</Text>

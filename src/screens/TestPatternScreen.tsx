@@ -38,7 +38,7 @@ export const TestPatternScreen: React.FC<TestPatternProps> = ({
   return (
     <SafeAreaView style={styles.container} testID={testId}>
       <View style={styles.content}>
-        <Text style={styles.title}>Pattern Bridge</Text>
+        <Text style={styles.title}>Mobile Base</Text>
         <Text style={styles.subtitle}>Test Pattern</Text>
         
         <View style={styles.patternDemo}>

@@ -1,14 +1,35 @@
 {
-  "name": "pattern-bridge",
+  "name": "mobile-base",
   "version": "1.0.0",
+  "description": "A modern, well-structured React Native starter app that follows Material Design 3 principles",
   "main": "index.ts",
   "scripts": {
-    "start": "./scripts/start.sh",
+    "start": "npx expo start --clear",
     "dev": "./scripts/start.sh",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jackccrawford/mobile-base.git"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "material-design",
+    "typescript",
+    "starter",
+    "template",
+    "mobile",
+    "app"
+  ],
+  "author": "Jack Crawford",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jackccrawford/mobile-base/issues"
+  },
+  "homepage": "https://github.com/jackccrawford/mobile-base#readme",
   "dependencies": {
     "@expo/metro-runtime": "~4.0.0",
     "@react-native-picker/picker": "^2.11.0",

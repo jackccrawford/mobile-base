@@ -83,7 +83,7 @@ const TabNavigator = () => {
         fontSize: 18,
         fontWeight: '500'
       }}>
-        Pattern Bridge
+        Mobile Base
       </Text>
     </View>
   );
