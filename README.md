@@ -23,6 +23,7 @@ A modern, well-structured React Native starter app that follows Material Design 
 ## Features
 
 - 🎨 **Material Design 3**: Complete implementation of MD3 theming, components, and interactions
+- 🌓 **Smart Theming**: Intuitive theme switching with automatic system theme detection
 - 📱 **Navigation**: Production-ready drawer and tab navigation setup using React Navigation
 - 🎭 **Pattern Examples**: Multiple layout patterns showcasing different UI approaches
 - 📦 **Zero Config**: Ready to use with minimal setup required
@@ -64,6 +65,20 @@ The app includes several layout pattern examples that you can use as starting po
 - More patterns coming soon!
 
 ## Customization
+
+### Settings
+
+The app includes a comprehensive settings screen with:
+- Theme switching (Light/Dark/System) with intuitive icon-based toggle
+- Custom header title configuration
+- Direct links to GitHub and license information
+
+### Color System
+
+The app implements a carefully designed color system that:
+- Provides optimal contrast in both light and dark modes
+- Uses consistent patterns for selected/unselected states
+- Follows Material Design 3 color token guidelines
 
 ### Theming
 

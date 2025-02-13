@@ -17,6 +17,14 @@ export const SettingsScreen = () => {
     }
   };
 
+  const openMITLicense = async () => {
+    const url = 'https://opensource.org/licenses/MIT';
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      await Linking.openURL(url);
+    }
+  };
+
   const handleTitlePress = () => {
     setTempTitle(theme.headerTitle);
     setIsEditingTitle(true);
@@ -33,8 +41,8 @@ export const SettingsScreen = () => {
 
   const getThemeIcon = () => {
     if (theme.themeMode === 'system') return <Smartphone size={24} color={theme.colors.onSurface} />;
-    return theme.dark ? 
-      <Moon size={24} color={theme.colors.onSurface} /> : 
+    return theme.dark ?
+      <Moon size={24} color={theme.colors.onSurface} /> :
       <Sun size={24} color={theme.colors.onSurface} />;
   };
 
@@ -47,20 +55,20 @@ export const SettingsScreen = () => {
   };
 
   const remainingChars = 20 - (tempTitle?.length || 0);
-  const charsColor = remainingChars <= 3 ? theme.colors.error : 
-                    remainingChars <= 5 ? theme.colors.info : 
-                    theme.colors.onSurfaceVariant;
+  const charsColor = remainingChars <= 3 ? theme.colors.error :
+    remainingChars <= 5 ? theme.colors.info :
+      theme.colors.onSurfaceVariant;
 
   const renderSettingsItem = (
-    icon: React.ReactNode, 
-    title: string, 
-    value?: string, 
-    onPress?: () => void, 
+    icon: React.ReactNode,
+    title: string,
+    value?: string,
+    onPress?: () => void,
     showChevron: boolean = true,
     rightIcon?: React.ReactNode,
     customContent?: React.ReactNode
   ) => (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={[styles.settingsItem, { borderBottomColor: theme.colors.outline + '20' }]}
       onPress={onPress}
       disabled={!onPress && !customContent}
@@ -112,7 +120,7 @@ export const SettingsScreen = () => {
   };
 
   return (
-    <ScrollView 
+    <ScrollView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       contentInsetAdjustmentBehavior="automatic"
     >
@@ -132,7 +140,7 @@ export const SettingsScreen = () => {
                 <TextInput
                   value={tempTitle}
                   onChangeText={setTempTitle}
-                  style={[styles.titleInput, { 
+                  style={[styles.titleInput, {
                     color: theme.colors.onSurface,
                     borderColor: theme.colors.outline,
                   }]}
@@ -168,12 +176,20 @@ export const SettingsScreen = () => {
             false,
             <ExternalLink size={20} color={theme.colors.onSurfaceVariant} />
           )}
+          {renderSettingsItem(
+            <Monitor size={24} color={theme.colors.onSurface} />,
+            'MIT License',
+            'View MIT License',
+            openMITLicense,
+            false,
+            <ExternalLink size={20} color={theme.colors.onSurfaceVariant} />
+          )}
         </View>
       </View>
 
-      <RNText style={[styles.footer, { color: theme.colors.onSurfaceVariant }]}>
-        Copyright 2025 Managed Ventures LLC{'\n'}
-        MIT License
+      <RNText style={[styles.footer, { color: theme.colors.onSurfaceVariant }]}>Coders gotta code!{'\n'}{'\n'}
+        Managed Ventures LLC{'\n'}
+        Scottsdale | Arizona | USA{'\n'}Copyright © 2025
       </RNText>
     </ScrollView>
   );
