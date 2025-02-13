@@ -5,7 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { HomeScreen } from '../screens/HomeScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { useTheme } from '../contexts/ThemeContext';
-import { Home, Settings, Menu, ChevronLeft, Bell, BellDot } from 'lucide-react-native';
+import { Home, Settings, Menu, ChevronLeft, Bell, BellDot, Sun, Moon, Monitor } from 'lucide-react-native';
 import { Platform, TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, DrawerActions } from '@react-navigation/native';

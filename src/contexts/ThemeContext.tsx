@@ -70,10 +70,11 @@ const darkThemeColors = {
   text: '#FFFFFF',
   surface: '#121212',
   onSurface: '#FFFFFF',
+  primary: '#FFFFFF',
+  onSurfaceVariant: '#8E8E93',
   primaryContainer: '#1A237E',
   onPrimaryContainer: '#FFFFFF',
   outline: '#938F99',
-  onSurfaceVariant: '#CAC4D0',
 };
 
 export interface ThemeContextType {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text as RNText, TouchableOpacity, ScrollView, Linking, Platform, TextInput } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
-import { Moon, Sun, Layout, ChevronRight, Info, Github, ExternalLink, Smartphone, Text as TextIcon } from 'lucide-react-native';
+import { Moon, Sun, Layout, ChevronRight, Info, Github, ExternalLink, Smartphone, Text as TextIcon, Monitor } from 'lucide-react-native';
 import type { ThemeMode } from '../contexts/ThemeContext';
 
 export const SettingsScreen = () => {
@@ -54,7 +54,7 @@ export const SettingsScreen = () => {
   const renderSettingsItem = (
     icon: React.ReactNode, 
     title: string, 
-    value: string, 
+    value?: string, 
     onPress?: () => void, 
     showChevron: boolean = true,
     rightIcon?: React.ReactNode,
@@ -72,13 +72,44 @@ export const SettingsScreen = () => {
       <View style={styles.settingsItemRight}>
         {customContent || (
           <>
-            <RNText style={[styles.settingsItemValue, { color: theme.colors.onSurfaceVariant }]}>{value}</RNText>
+            {value && (
+              <RNText style={[styles.settingsItemValue, { color: theme.colors.onSurfaceVariant }]}>{value}</RNText>
+            )}
             {rightIcon || (showChevron && <ChevronRight size={20} color={theme.colors.onSurfaceVariant} />)}
           </>
         )}
       </View>
     </TouchableOpacity>
   );
+
+  const ThemeToggle = () => {
+    const ThemeIcon = {
+      'light': Sun,
+      'dark': Moon,
+      'system': Monitor
+    }[theme.themeMode];
+
+    const nextMode = {
+      'light': 'dark',
+      'dark': 'system',
+      'system': 'light'
+    }[theme.themeMode];
+
+    return (
+      <TouchableOpacity
+        style={styles.settingsItem}
+        onPress={() => setThemeMode(nextMode)}
+      >
+        <View style={styles.settingsItemLeft}>
+          <Layout size={24} color={theme.colors.onSurface} />
+          <RNText style={[styles.settingsItemTitle, { color: theme.colors.onSurface }]}>
+            Theme
+          </RNText>
+        </View>
+        <ThemeIcon size={24} color={theme.colors.onSurface} />
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <ScrollView 
@@ -88,17 +119,7 @@ export const SettingsScreen = () => {
       <View style={styles.section}>
         <RNText style={[styles.sectionTitle, { color: theme.colors.primary }]}>Appearance</RNText>
         <View style={[styles.card, { backgroundColor: theme.colors.surface, elevation: 2 }]}>
-          {renderSettingsItem(
-            getThemeIcon(),
-            'Theme',
-            getThemeText(),
-            () => {
-              const modes: ThemeMode[] = ['system', 'light', 'dark'];
-              const currentIndex = modes.indexOf(theme.themeMode);
-              const nextMode = modes[(currentIndex + 1) % modes.length];
-              handleThemeChange(nextMode);
-            }
-          )}
+          <ThemeToggle />
           {renderSettingsItem(
             <TextIcon size={24} color={theme.colors.onSurface} />,
             'Header Title',
@@ -242,5 +263,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     opacity: 0.7,
     lineHeight: 20,
+  },
+  themeButton: {
+    padding: 16,
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+  },
+  themeContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  themeText: {
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
