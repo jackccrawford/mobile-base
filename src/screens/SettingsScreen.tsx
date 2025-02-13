@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text as RNText, TouchableOpacity, ScrollView, Linking, Platform, TextInput } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
-import { Moon, Sun, Layout, ChevronRight, Info, Github, ExternalLink, Smartphone, Text as TextIcon, Monitor } from 'lucide-react-native';
+import { Moon, Sun, Layout, ChevronRight, Info, Github, ExternalLink, Smartphone, Text as TextIcon, Monitor, Bitcoin, Palette } from 'lucide-react-native';
 import type { ThemeMode } from '../contexts/ThemeContext';
 
 export const SettingsScreen = () => {
-  const { theme, setHeaderTitle, setThemeMode } = useTheme();
+  const { theme, setTheme, setThemeMode, setHeaderTitle } = useTheme();
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [tempTitle, setTempTitle] = useState(theme.headerTitle);
 
@@ -128,6 +128,21 @@ export const SettingsScreen = () => {
         <RNText style={[styles.sectionTitle, { color: theme.colors.primary }]}>Appearance</RNText>
         <View style={[styles.card, { backgroundColor: theme.colors.surface, elevation: 2 }]}>
           <ThemeToggle />
+          <TouchableOpacity
+            style={styles.settingsItem}
+            onPress={() => setTheme({ ...theme, bitcoinMode: !theme.bitcoinMode })}
+          >
+            <View style={styles.settingsItemLeft}>
+              <Palette size={24} color={theme.colors.onSurface} />
+              <RNText style={[styles.settingsItemTitle, { color: theme.colors.onSurface }]}>
+                Bitcoin Theme
+              </RNText>
+            </View>
+            <Bitcoin 
+              size={24} 
+              color={theme.bitcoinMode ? theme.colors.primary : theme.colors.onSurfaceVariant} 
+            />
+          </TouchableOpacity>
           {renderSettingsItem(
             <TextIcon size={24} color={theme.colors.onSurface} />,
             'Header Title',
@@ -189,7 +204,7 @@ export const SettingsScreen = () => {
 
       <RNText style={[styles.footer, { color: theme.colors.onSurfaceVariant }]}>Coders gotta code!{'\n'}{'\n'}
         Managed Ventures LLC{'\n'}
-        Scottsdale | Arizona | USA{'\n'}Copyright © 2025
+        Scottsdale | Arizona | USA{'\n'}Copyright 2025
       </RNText>
     </ScrollView>
   );

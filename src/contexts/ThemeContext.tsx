@@ -32,6 +32,7 @@ export interface Theme {
   dark: boolean;
   themeMode: ThemeMode;
   headerTitle: string;
+  bitcoinMode: boolean;
 }
 
 const defaultTheme: Theme = {
@@ -62,6 +63,7 @@ const defaultTheme: Theme = {
   dark: false,
   themeMode: 'system',
   headerTitle: 'Mobile Base',
+  bitcoinMode: false,
 };
 
 const darkThemeColors = {
@@ -88,10 +90,9 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>(defaultTheme);
-  const systemColorScheme = useColorScheme();
+  const colorScheme = useColorScheme();
 
   useEffect(() => {
-    // Load saved theme settings
     const loadTheme = async () => {
       try {
         const savedTheme = await AsyncStorage.getItem('theme');
@@ -105,48 +106,64 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     loadTheme();
   }, []);
 
-  useEffect(() => {
-    // Update dark mode based on theme mode and system preference
-    const isDark = theme.themeMode === 'system' 
-      ? systemColorScheme === 'dark'
-      : theme.themeMode === 'dark';
+  const getThemeColors = (mode: ThemeMode, systemIsDark: boolean, bitcoinMode: boolean) => {
+    const isDark = mode === 'system' ? systemIsDark : mode === 'dark';
+    const baseColors = isDark ? darkThemeColors : defaultTheme.colors;
 
-    if (isDark !== theme.dark) {
-      setTheme({
-        ...theme,
-        dark: isDark,
-        colors: isDark ? darkThemeColors : defaultTheme.colors,
-      });
+    if (!isDark && bitcoinMode) {
+      return {
+        ...baseColors,
+        primary: '#f7931a'  // Bitcoin orange in light mode only
+      };
     }
-  }, [systemColorScheme, theme.themeMode]);
+
+    return baseColors;
+  };
+
+  useEffect(() => {
+    const systemIsDark = colorScheme === 'dark';
+    const isDark = theme.themeMode === 'system' ? systemIsDark : theme.themeMode === 'dark';
+    
+    const newTheme = {
+      ...theme,
+      dark: isDark,
+      colors: getThemeColors(theme.themeMode, systemIsDark, theme.bitcoinMode)
+    };
+    setThemeState(newTheme);
+  }, [theme.themeMode, colorScheme, theme.bitcoinMode]);
 
   const setTheme = async (newTheme: Theme) => {
     try {
-      await AsyncStorage.setItem('theme', JSON.stringify(newTheme));
+      const themeToSave = {
+        ...newTheme,
+        colors: newTheme.dark ? darkThemeColors : defaultTheme.colors
+      };
+      await AsyncStorage.setItem('theme', JSON.stringify(themeToSave));
       setThemeState(newTheme);
     } catch (error) {
       console.error('Error saving theme:', error);
     }
   };
 
-  const setHeaderTitle = (title: string) => {
-    if (title.length <= 20) {
-      setTheme({
-        ...theme,
-        headerTitle: title,
-      });
-    }
+  const setThemeMode = async (mode: ThemeMode) => {
+    const newTheme = { ...theme, themeMode: mode };
+    setTheme(newTheme);
   };
 
-  const setThemeMode = (mode: ThemeMode) => {
-    setTheme({
-      ...theme,
-      themeMode: mode,
-    });
+  const setHeaderTitle = async (title: string) => {
+    const newTheme = { ...theme, headerTitle: title };
+    setTheme(newTheme);
+  };
+
+  const contextValue = {
+    theme,
+    setTheme,
+    setThemeMode,
+    setHeaderTitle,
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, setHeaderTitle, setThemeMode }}>
+    <ThemeContext.Provider value={contextValue}>
       {children}
     </ThemeContext.Provider>
   );
