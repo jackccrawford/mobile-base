@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
+import { NavigationContainer } from '@react-navigation/native';
 import { HomeScreen } from '../screens/HomeScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { useTheme } from '../contexts/ThemeContext';
-import { Home, Settings, Menu, ChevronLeft } from 'lucide-react-native';
+import { Home, Settings, Menu, ChevronLeft, Bell, BellDot } from 'lucide-react-native';
 import { Platform, TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
@@ -14,15 +15,15 @@ const Drawer = createDrawerNavigator();
 
 // [AI-MUTABLE] Pattern options may change as new patterns are added
 const patterns = [
-  { label: 'Infinite Scroll', value: 'infinitescroll' },
   { label: 'Masonry Grid', value: 'masonry' },
+  { label: 'Infinite Scroll', value: 'infinitescroll' },
   { label: 'Card Swipe', value: 'cardswipe' },
-  { label: 'More Cowbell', value: 'cowbell' },
+  { label: 'Cowbell', value: 'cowbell' },
 ];
 
 const CustomDrawerContent = (props) => {
   const { theme } = useTheme();
-  
+
   // Get current screen and pattern state
   const state = props.state;
   const currentTab = state?.routes[state.index]?.name || '';
@@ -30,7 +31,7 @@ const CustomDrawerContent = (props) => {
   const currentPattern = isHomeScreen ? (state?.routes[state.index]?.state?.routes[0]?.params?.pattern || 'masonry') : null;
 
   return (
-    <DrawerContentScrollView 
+    <DrawerContentScrollView
       {...props}
       contentContainerStyle={{
         flex: 1,
@@ -53,9 +54,9 @@ const CustomDrawerContent = (props) => {
             pressOpacity={0.9}
             labelStyle={[
               styles.drawerItemText,
-              { 
+              {
                 color: theme.colors.onSurface,
-                opacity: isSelected ? 0.38 : 1 
+                opacity: isSelected ? 0.38 : 1
               }
             ]}
             style={[
@@ -71,6 +72,24 @@ const CustomDrawerContent = (props) => {
   );
 };
 
+const HeaderBell = () => {
+  const { theme } = useTheme();
+  const [isActive, setIsActive] = useState(false);
+
+  return (
+    <TouchableOpacity
+      onPress={() => setIsActive(!isActive)}
+      style={{ marginRight: 16 }}
+    >
+      {isActive ? (
+        <BellDot size={24} color={theme.colors.primary} />
+      ) : (
+        <Bell size={24} color={theme.colors.onSurface} />
+      )}
+    </TouchableOpacity>
+  );
+};
+
 const TabNavigator = () => {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
@@ -78,7 +97,7 @@ const TabNavigator = () => {
 
   const renderTitle = () => (
     <View style={{ alignItems: 'center' }}>
-      <Text style={{ 
+      <Text style={{
         color: theme.colors.onSurface,
         fontSize: 18,
         fontWeight: '500'
@@ -134,22 +153,7 @@ const TabNavigator = () => {
             </TouchableOpacity>
           ),
           headerTitle: renderTitle,
-          headerRight: () => (
-            <View style={{ 
-              flexDirection: 'row',
-              marginRight: 16,
-              gap: 8,
-            }}>
-              <TouchableOpacity
-                style={{ padding: 8 }}
-                onPress={() => {
-                  console.log('Right action');
-                }}
-              >
-                <Settings size={24} color={theme.colors.onSurface} />
-              </TouchableOpacity>
-            </View>
-          ),
+          headerRight: () => <HeaderBell />,
           tabBarIcon: ({ color, size }) => (
             <Home size={size} color={color} />
           ),
@@ -159,7 +163,6 @@ const TabNavigator = () => {
         name="Settings"
         component={SettingsScreen}
         options={{
-          headerTitle: renderTitle,
           tabBarIcon: ({ color, size }) => (
             <Settings size={size} color={color} />
           ),
@@ -180,13 +183,18 @@ export const ThemedNavigator = () => {
         headerShown: false,
         drawerStyle: {
           backgroundColor: theme.colors.surface,
-          width: 200,
+          width: Platform.select({
+            web: 280,
+            default: '80%',
+          }),
+          maxWidth: 350,
+          minWidth: 250,
         },
         overlayColor: 'rgba(0, 0, 0, 0.5)',
       }}
     >
-      <Drawer.Screen 
-        name="Main" 
+      <Drawer.Screen
+        name="Main"
         component={TabNavigator}
         options={{
           headerShown: false,
