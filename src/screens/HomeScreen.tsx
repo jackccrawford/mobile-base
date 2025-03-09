@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
-import { CardSwipeDemo } from '../components/patterns/CardSwipe/CardSwipeDemo';
+import { CardSwipeWrapper } from '../components/patterns/CardSwipe/CardSwipeWrapper';
 import { MasonryGridDemo } from '../components/patterns/MasonryGrid/MasonryGridDemo';
 import { InfiniteScrollDemo } from '../components/patterns/InfiniteScroll/InfiniteScrollDemo';
 import { CowbellDemo } from '../components/patterns/MoreCowbell/CowbellDemo';
@@ -16,6 +16,7 @@ export const HomeScreen = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
+  
     const pattern = (route.params as any)?.pattern;
     if (pattern && pattern !== selectedPattern) {
       handlePatternChange(pattern as Pattern);
@@ -44,7 +45,7 @@ export const HomeScreen = () => {
       case 'cowbell':
         return <CowbellDemo />;
       case 'cardswipe':
-        return <CardSwipeDemo />;
+        return <CardSwipeWrapper />;
       case 'infinitescroll':
         return <InfiniteScrollDemo />;
       default:
