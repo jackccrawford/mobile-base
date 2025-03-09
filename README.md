@@ -60,9 +60,14 @@ src/
 The app includes several layout pattern examples that you can use as starting points for your own screens:
 
 - **Masonry**: Pinterest-style grid layout
+- **Card Swipe**: Tinder-style card swiping interface (works on mobile and web)
 - **Standard**: Traditional mobile list view
 - **Focus**: Centered content with emphasis
 - More patterns coming soon!
+
+### Known Issues
+
+- **TODO**: Card swipe animation on desktop browsers needs improvement - cards don't always animate completely off screen when swiped. The implementation works well on mobile web and native platforms.
 
 ## Customization
 
