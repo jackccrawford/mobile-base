@@ -40,6 +40,8 @@ export const SettingsScreen = () => {
   };
 
   const getThemeIcon = () => {
+    if (!theme || !theme.themeMode) return <Smartphone size={24} color={theme?.colors?.onSurface} />;
+    
     if (theme.themeMode === 'system') return <Smartphone size={24} color={theme.colors.onSurface} />;
     return theme.dark ?
       <Moon size={24} color={theme.colors.onSurface} /> :
@@ -47,6 +49,8 @@ export const SettingsScreen = () => {
   };
 
   const getThemeText = () => {
+    if (!theme || !theme.themeMode) return 'System';
+    
     switch (theme.themeMode) {
       case 'light': return 'Light';
       case 'dark': return 'Dark';
@@ -97,11 +101,11 @@ export const SettingsScreen = () => {
       'system': Monitor
     }[theme.themeMode];
 
-    const nextMode = {
-      'light': 'dark',
-      'dark': 'system',
-      'system': 'light'
-    }[theme.themeMode];
+    const nextMode: ThemeMode = {
+      'light': 'dark' as ThemeMode,
+      'dark': 'system' as ThemeMode,
+      'system': 'light' as ThemeMode
+    }[theme.themeMode || 'system'];
 
     return (
       <TouchableOpacity

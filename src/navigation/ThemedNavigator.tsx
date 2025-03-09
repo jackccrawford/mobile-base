@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
@@ -7,6 +7,7 @@ import { SettingsScreen } from '../screens/SettingsScreen';
 import { useTheme } from '../contexts/ThemeContext';
 import { Home, Settings, Menu, ChevronLeft, Bell, BellDot, Sun, Moon, Monitor } from 'lucide-react-native';
 import { Platform, TouchableOpacity, View, Text, StyleSheet } from 'react-native';
+import { getAccessibleHeaderColors } from '../utils/colorUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 
@@ -21,7 +22,7 @@ const patterns = [
   { label: 'Cowbell', value: 'cowbell' },
 ];
 
-const CustomDrawerContent = (props) => {
+const CustomDrawerContent = (props: any) => {
   const { theme } = useTheme();
 
   // Get current screen and pattern state
@@ -75,6 +76,11 @@ const CustomDrawerContent = (props) => {
 const HeaderBell = () => {
   const { theme } = useTheme();
   const [isActive, setIsActive] = useState(false);
+  
+  // Get accessible header colors
+  const headerColors = useMemo(() => {
+    return getAccessibleHeaderColors(theme.colors.primary);
+  }, [theme.colors.primary]);
 
   return (
     <TouchableOpacity
@@ -84,7 +90,7 @@ const HeaderBell = () => {
       {isActive ? (
         <BellDot size={24} color={theme.colors.primary} />
       ) : (
-        <Bell size={24} color={theme.colors.onSurface} />
+        <Bell size={24} color={headerColors.text} />
       )}
     </TouchableOpacity>
   );
@@ -94,11 +100,16 @@ const TabNavigator = () => {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  
+  // Calculate accessible header colors based on the primary color
+  const headerColors = useMemo(() => {
+    return getAccessibleHeaderColors(theme.colors.primary);
+  }, [theme.colors.primary]);
 
   const renderTitle = () => (
     <View style={{ alignItems: 'center' }}>
       <Text style={{
-        color: theme.colors.onSurface,
+        color: headerColors.text,
         fontSize: 18,
         fontWeight: '500'
       }}>
@@ -114,9 +125,9 @@ const TabNavigator = () => {
         tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
         headerShown: true,
         headerStyle: {
-          backgroundColor: theme.colors.surface,
+          backgroundColor: headerColors.background,
         },
-        headerTintColor: theme.colors.onSurface,
+        headerTintColor: headerColors.text,
         headerTitleStyle: {
           fontWeight: '400',
         },
@@ -149,7 +160,7 @@ const TabNavigator = () => {
                 navigation.dispatch(DrawerActions.toggleDrawer());
               }}
             >
-              <Menu size={24} color={theme.colors.onSurface} />
+              <Menu size={24} color={headerColors.text} />
             </TouchableOpacity>
           ),
           headerTitle: renderTitle,
@@ -183,10 +194,7 @@ export const ThemedNavigator = () => {
         headerShown: false,
         drawerStyle: {
           backgroundColor: theme.colors.surface,
-          width: Platform.select({
-            web: 280,
-            default: '80%',
-          }),
+          width: Platform.OS === 'web' ? 280 : '80%',
           maxWidth: 350,
           minWidth: 250,
         },
